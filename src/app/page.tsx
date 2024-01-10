@@ -1,4 +1,5 @@
-import Image from 'next/image'
+import Image from 'next/image';
+import Button from '@mui/material/Button';
 
 export default function Home() {
   return (
@@ -52,6 +53,7 @@ export default function Home() {
               -&gt;
             </span>
           </h2>
+
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
             Find in-depth information about Next.js features and API.
           </p>
