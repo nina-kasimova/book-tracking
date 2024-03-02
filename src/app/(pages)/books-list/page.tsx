@@ -8,15 +8,16 @@ import {supabase} from "@/utils/supabase";
 
 export default function BooksList() {
 
-    const[bookData, setBookData] = useState<any>([]);
+    const [bookData, setBookData] = useState<any>([]);
 
-    useEffect( () => {
+    useEffect(() => {
         async function fetchData() {
             const {data, error} = await supabase
                 .from('books')
                 .select()
             setBookData(data)
         }
+
         fetchData().then(r => {
             console.log("Data fetched", bookData)
         });
@@ -24,18 +25,22 @@ export default function BooksList() {
     }, []);
 
     return (
-            <div>
-                <p className="font-semibold text-lg text-primary">My books</p>
+        <div>
+            <p className="font-semibold text-lg text-primary">My books</p>
+            {bookData ? (
                 <ul>
-                    {bookData.map((book,index) => (
+                    {bookData.map((book, index) => (
 
-                        <li key={book.id}>
-                            {book.title}
-                        </li>
+                            <li key={book.id}>
+                                {book.title}
+                            </li>
                         )
                     )}
                 </ul>
-                <button className="btn btn-primary">Button</button>
-            </div>
+            ) : (
+                <p>not books loaded</p>
+            )}
+            <button className="btn btn-primary">Button</button>
+        </div>
     )
 }
