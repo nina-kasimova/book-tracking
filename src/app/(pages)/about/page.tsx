@@ -15,8 +15,12 @@ export default function About() {
                     <li>Do the same with the writing style, language used</li>
                 </ul>
             </div>
-            <p>Changing themes and colours is here <a href={"https://daisyui.com/"} className="text-accent">daisyui.com/</a></p>
-            <p>General tailwind styles <a href={"https://tailwindcss.com/docs/flex-basis"} className="text-accent">tailwindcss.com</a></p>
+            <div>
+                <h1 className="text-lg font-semibold text-primary">Technical details and info</h1>
+                <p>Changing themes and colours is here <a href={"https://daisyui.com/"} className="text-accent">daisyui.com/</a></p>
+                <p>General tailwind styles <a href={"https://tailwindcss.com/docs/flex-basis"} className="text-accent">tailwindcss.com</a></p>
+                <p>Table docs <a href={"https://ui.shadcn.com/docs/components/data-table"} className="text-accent">shadcn/ui+TanStack</a></p>
+            </div>
 
         </div>
     );
