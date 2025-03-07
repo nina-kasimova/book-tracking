@@ -5,6 +5,11 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 export const columns: ColumnDef<Book>[] = [
     {
+        accessorKey: "index",
+        header: "#",
+        cell: (props) => <p>{props.row.index + 1}</p>, // 1-based index
+    },
+    {
         accessorKey: 'title',
         header: ({ column }) => {
             return (
