@@ -7,6 +7,7 @@ import {DataTable} from "@/app/components/DataTable";
 import {Book} from "@/app/(pages)/books-list/book-interface";
 import {columns} from "@/app/(pages)/books-list/columns";
 import axios from 'axios';
+import Loading from "@/app/(pages)/books-list/loading";
 
 
 
@@ -14,12 +15,15 @@ export default function BooksList() {
 
     const [data, setData] = useState<Book[]>([])
     const [url, setUrl] = useState("")
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("")
 
     const handleScrape = async () => {
         if (!url) {
             alert("Please enter a URL!");
             return;
         }
+        setLoading(true);
 
         try {
             // Send the URL to FastAPI to start scraping
@@ -51,6 +55,7 @@ export default function BooksList() {
 
         } catch (error) {
             console.error("Error scraping:", error);
+            setError("Error scraping")
         }
     };
 
@@ -62,6 +67,8 @@ export default function BooksList() {
             console.log("Books fetched:", books);
         } catch (error) {
             console.error("Error fetching books:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -78,12 +85,19 @@ export default function BooksList() {
             <button
                 onClick={handleScrape}
                 className={`btn btn-sm mr-1 ${
-                    !url ? "bg-gray-400 text-gray-200 cursor-not-allowed" : "btn-secondary"
+                    !url || loading ? "bg-gray-400 text-gray-200 cursor-not-allowed" : "btn-secondary"
                 }`}
-                disabled={!url}
+                disabled={!url || loading}
             >
                 Scrape Books
             </button>
+            {/* Error Message */}
+            {error && <p className="text-red-500">{error}</p>}
+
+            {/* Show Loading Spinner */}
+            {loading && (
+                <Loading/>
+            )}
             {data ? (
                 <div className="overflow-x-auto">
                     <DataTable columns={columns} data={data} />
