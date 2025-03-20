@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Book Scraping Application - Frontend
 
-## Getting Started
+This is the frontend of a Book Scraping Application built using React, TypeScript, and Tailwind CSS. The app allows users to scrape book data from a Goodreads list and display the books in a table. It also supports creating new lists and fetching scraped books.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Create and manage book lists.
+- Scrape book data from a provided Goodreads list URL.
+- Display scraped books in a table with sortable columns.
+- Search and filter through books.
+- Display book details with clickable links to Goodreads.
+- Responsive and modern UI using Tailwind CSS.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/book-table.tsx`. The page auto-updates as you edit the file.
+- **React** - For building the user interface.
+- **TypeScript** - To provide static type checking.
+- **Axios** - For making HTTP requests to the backend.
+- **Tailwind CSS** - For styling the application.
+- **React Table** - For rendering and managing the book data in a table format.
+- **Material UI** - For UI components such as buttons and inputs.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/book-scraping-frontend.git
+   cd book-scraping-frontend
