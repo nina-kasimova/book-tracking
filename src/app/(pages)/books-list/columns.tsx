@@ -24,15 +24,20 @@ export const columns: ColumnDef<Book>[] = [
         },
         cell: (props) => {
             const book = props.row.original
-            return (
-                <a href={book.url}
-                target={"_blank"}
-                rel={"noreferrer"}
-                className={"flex items-center"}>
+            return book.url ? (
+                <a
+                    href={"https://www.goodreads.com" + book.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center"
+                >
                     <p>{props.getValue()}</p>
-            </a>
-                )}
-    },
+                </a>
+            ) : (
+                <p>{props.getValue()}</p>
+            );
+        }
+        },
     {
         accessorKey: 'author',
         header: ({ column }) => {
