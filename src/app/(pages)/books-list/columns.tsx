@@ -5,6 +5,11 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 export const columns: ColumnDef<Book>[] = [
     {
+        accessorKey: "index",
+        header: "#",
+        cell: (props) => <p>{props.row.index + 1}</p>, // 1-based index
+    },
+    {
         accessorKey: 'title',
         header: ({ column }) => {
             return (
@@ -17,7 +22,16 @@ export const columns: ColumnDef<Book>[] = [
                 </button>
             )
         },
-        cell: (props) => <p>{props.getValue()}</p>
+        cell: (props) => {
+            const book = props.row.original
+            return (
+                <a href={book.url}
+                target={"_blank"}
+                rel={"noreferrer"}
+                className={"flex items-center"}>
+                    <p>{props.getValue()}</p>
+            </a>
+                )}
     },
     {
         accessorKey: 'author',
@@ -35,14 +49,29 @@ export const columns: ColumnDef<Book>[] = [
         cell: (props) => <p>{props.getValue()}</p>
     },
     {
-        accessorKey: 'my_rating',
+        accessorKey: 'avg_rating',
         header: ({ column }) => {
             return (
                 <button
                     className="btn btn-ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    My Rating
+                    Avg Rating
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </button>
+            )
+        },
+        cell: (props) => <p>{props.getValue()}</p>
+    },
+    {
+        accessorKey: 'review_count',
+        header: ({ column }) => {
+            return (
+                <button
+                    className="btn btn-ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Reviews
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </button>
             )

@@ -58,6 +58,7 @@ export function DataTable<TData, TValue>({
             columnFilters,
             columnVisibility
         },
+        manualPagination: true
     })
     return (
         <div>
@@ -101,9 +102,9 @@ export function DataTable<TData, TValue>({
                 </DropdownMenu>
             </div>
 
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
+            <div className="rounded-md border overflow-y-auto max-h-[500px]">
+                <Table className="w-full">
+                    <TableHeader className="sticky top-0 bg-white z-10">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -144,23 +145,6 @@ export function DataTable<TData, TValue>({
                         )}
                     </TableBody>
                 </Table>
-
-                <div className="flex items-center justify-end space-x-2 py-4">
-                    <button
-                        className="btn btn-sm btn-outline"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        Previous
-                    </button>
-                    <button
-                        className="btn btn-sm btn-outline"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Next
-                    </button>
-                </div>
             </div>
         </div>
     )
