@@ -1,13 +1,37 @@
 import {ColumnDef} from '@tanstack/react-table'
 import {Book} from "@/app/(pages)/books-list/book-interface";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import Image from "next/image";
 
 
+// @ts-ignore
 export const columns: ColumnDef<Book>[] = [
     {
         accessorKey: "index",
         header: "#",
         cell: (props) => <p>{props.row.index + 1}</p>, // 1-based index
+    },
+    {
+        accessorKey: 'cover_url',
+        header: () => <></>,
+        cell: (props) => {
+            const book = props.row.original;
+
+            if (!book.cover_url) return null;
+
+            // Replace "_SY75_" with "_SY500_" for better resolution
+            const highResCover = book.cover_url.replace(/_SY\d+_/, "_SY500_");
+
+            return (
+                <Image
+                    src={highResCover}
+                    alt="Book Cover"
+                    width={70}  // Adjust based on your design
+                    height={120} // Adjust based on your design
+                    className="object-cover rounded-md shadow-md"
+                />
+            );
+        }
     },
     {
         accessorKey: 'title',
@@ -24,15 +48,20 @@ export const columns: ColumnDef<Book>[] = [
         },
         cell: (props) => {
             const book = props.row.original
-            return (
-                <a href={book.url}
-                target={"_blank"}
-                rel={"noreferrer"}
-                className={"flex items-center"}>
+            return book.url ? (
+                <a
+                    href={"https://www.goodreads.com" + book.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center"
+                >
                     <p>{props.getValue()}</p>
-            </a>
-                )}
-    },
+                </a>
+            ) : (
+                <p>{props.getValue()}</p>
+            );
+        }
+        },
     {
         accessorKey: 'author',
         header: ({ column }) => {

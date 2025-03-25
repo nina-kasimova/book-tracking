@@ -6,7 +6,7 @@ import {DataTable} from "@/app/components/DataTable";
 import {Book} from "@/app/(pages)/books-list/book-interface";
 import {columns} from "@/app/(pages)/books-list/columns";
 import axios from 'axios';
-import Loading from "@/app/(pages)/books-list/loading";
+import Loading from "@/app/components/Loading";
 import {Input} from "@mui/material";
 import {
     DropdownMenu,

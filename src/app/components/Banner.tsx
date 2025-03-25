@@ -9,7 +9,8 @@ const Banner = () => {
                     <Link href="/" className="font-semibold text-2xl text-blue-950 text-white">App Name</Link>
                 </div>
                 <div className="w-1/5 flex justify-around">
-                    <Link href="/books-list" className="text-accent-content/60 hover:text-accent-content/100 text-white">Your books</Link>
+                    <Link href="/books-list" className="text-accent-content/60 hover:text-accent-content/100 text-white">My Books</Link>
+                    <Link href="/my-lists" className="text-accent-content/60 hover:text-accent-content/100 text-white">My Lists</Link>
                     <Link href="/about" className="text-accent-content/60 hover:text-accent-content/100 text-white">About</Link>
                 </div>
         </div>

@@ -102,9 +102,9 @@ export function DataTable<TData, TValue>({
                 </DropdownMenu>
             </div>
 
-            <div className="rounded-md border overflow-y-auto max-h-[500px]">
+            <div className="relative rounded-md border overflow-y-auto">
                 <Table className="w-full">
-                    <TableHeader className="sticky top-0 bg-white z-10">
+                    <TableHeader className="sticky top-0 bg-white z-50">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
