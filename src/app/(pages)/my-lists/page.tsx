@@ -34,7 +34,21 @@ const MyListsPage = () => {
         if (!confirmDelete) return;
 
         try {
-            await axios.post("http://localhost:8000/delete_list", { list_id: listId });
+            const headers = {
+                'accept': 'application/json',
+                'content-type': 'application/x-www-form-urlencoded'
+            };
+            const data = {
+                list_id: listId
+            }
+            const response = await axios.post(
+                'http://localhost:8000/delete_list',
+                '',
+                {
+                    params: data,
+                    headers: headers
+                }
+            );
             setLists(lists.filter((list: any) => list.id !== listId));
         } catch (error) {
             console.error("Error deleting list:", error);
@@ -45,10 +59,21 @@ const MyListsPage = () => {
     const editList = async (listId: number) => {
         if (!newName.trim()) return;
         try {
-            await axios.post("http://localhost:8000/edit_list_name", {
+            const headers = {
+                'accept': 'application/json',
+                'content-type': 'application/x-www-form-urlencoded'
+            };
+            const data = {
                 list_id: listId,
-                new_name: newName,
-            });
+                new_name: newName
+            }
+            await axios.post("http://localhost:8000/edit_list_name",
+                '',
+                {
+                    params: data,
+                    headers: headers
+                }
+            );
             setLists(lists.map((list: any) => (list.id === listId ? { ...list, name: newName } : list)));
             setEditingListId(null);
             setNewName("");
