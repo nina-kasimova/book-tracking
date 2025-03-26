@@ -11,6 +11,7 @@ const Banner = () => {
                 <div className="w-1/5 flex justify-around">
                     <Link href="/books-list" className="text-accent-content/60 hover:text-accent-content/100 text-white">My Books</Link>
                     <Link href="/my-lists" className="text-accent-content/60 hover:text-accent-content/100 text-white">My Lists</Link>
+                    <Link href="/search" className="text-accent-content/60 hover:text-accent-content/100 text-white">Recommendations</Link>
                     <Link href="/about" className="text-accent-content/60 hover:text-accent-content/100 text-white">About</Link>
                 </div>
         </div>
