@@ -2,8 +2,9 @@
 
 import axios from 'axios';
 import {useEffect, useState} from "react";
-import {BookRecommendation} from "@/app/constants";
+import {BookRecommendation} from "@/app/utils/constants";
 import {handleApiError} from "@/app/utils/apiHelper";
+import {prompt_template} from "@/app/utils/constants";
 
 
 export default function Search() {
@@ -11,15 +12,11 @@ export default function Search() {
     const [error, setError] = useState("");
     const [likedBooks, setLikedBooks] = useState("")
     const [recommendations, setRecommendations] = useState<BookRecommendation[]>();
-
-    const prompt_template = `I want you to generate book recommendations in JSON format given that i liked the following books before: ${likedBooks}. " +
-    "The recommendations should include books with similar themes, writing styles, or emotional depth. Ensure the response follows this exact JSON structure:" +
-    "[ {title: 'Book Title', author: 'Book Author', genre: 'Book Genre', description: 'Book Description', reason: 'Reason why you'll like it', goodreads: 'Goodreads Link'}, ... ]`;
     const [prompt, setPrompt] = useState("");
 
     useEffect(() => {
-        setPrompt(prompt_template)
-        }, [likedBooks]);
+        setPrompt(prompt_template(likedBooks));
+    }, [likedBooks]);
 
     const sendRequest = async () => {
 
@@ -44,6 +41,7 @@ export default function Search() {
                     headers: headers
                 }
             )
+
             axios.interceptors.request.use((request) => {
                 console.log('Starting Request', JSON.stringify(request, null, 2));
                 return request;
@@ -110,7 +108,8 @@ export default function Search() {
                         {recommendations.map((book, index) => (
                             <li key={index} className="p-4 border rounded-md shadow-sm bg-white">
                                 <h3 className="text-lg font-bold">{book.title}</h3>
-                                <p className="text-sm text-gray-700">by <span className="font-medium">{book.author}</span></p>
+                                <p className="text-sm text-gray-700">by <span
+                                    className="font-medium">{book.author}</span></p>
                                 <p className="text-sm text-gray-600 mt-1"><strong>Genre:</strong> {book.genre}</p>
 
                                 <div className="mt-2">

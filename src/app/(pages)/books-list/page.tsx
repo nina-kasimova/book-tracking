@@ -7,15 +7,14 @@ import {Book} from "@/app/(pages)/books-list/book-interface";
 import {columns} from "@/app/(pages)/books-list/columns";
 import axios from 'axios';
 import Loading from "@/app/components/Loading";
-import {Input} from "@mui/material";
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+import {handleApiError} from "@/app/utils/apiHelper";
 
 
 
@@ -82,18 +81,7 @@ export default function BooksList() {
         } catch (error: any) {
             console.error("Error creating list:", error);
 
-            // Handle known API errors
-            if (error.response) {
-                if (error.response.status === 400) {
-                    setError("List name already exists. Try a different name.");
-                } else if (error.response.status === 422) {
-                    setError("Invalid list name. Please enter a valid one.");
-                } else {
-                    setError("Failed to create list. Please try again.");
-                }
-            } else {
-                setError("Network error. Please check your connection.");
-            }
+            handleApiError(error, setError);
             setLoading(false);
             return;
         }
