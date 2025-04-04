@@ -7,6 +7,10 @@ const nextConfig = {
                 protocol: "https",
                 hostname: "i.gr-assets.com",
             },
+            {
+                protocol: "http",
+                hostname: "books.google.com",
+            }
         ],
     },
 };

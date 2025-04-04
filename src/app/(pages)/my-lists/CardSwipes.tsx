@@ -11,6 +11,7 @@ interface Book {
     author: string;
     genre: string;
     cover_url: string;
+    page_count: number;
 }
 
 const MAX_SELECTION = 3;
@@ -22,6 +23,7 @@ export default function CardSwipes({setLikedBooks, onComplete}) {
     const [loading, setLoading] = useState(false);
     const [requestSent, setRequestSent] = useState(false); // Track if request was sent
     const controls = useAnimation();
+    const [history, setHistory] = useState<Book[]>([]);
 
     const shuffleArray = (array: Book[]) => {
         for (let i = array.length - 1; i > 0; i--) {
@@ -35,10 +37,11 @@ export default function CardSwipes({setLikedBooks, onComplete}) {
         setLoading(true);
         try {
             const response = await axios.get("http://localhost:8000/get_books_byList", {
-                params: {list_id: 48}
+                params: {list_id: 52}
             });
 
             const shuffledBooks = shuffleArray(response.data);
+            console.log(shuffledBooks)
             setBooks(shuffledBooks);
             console.log("Books fetched & shuffled:", shuffledBooks);
         } catch (error) {
@@ -52,18 +55,30 @@ export default function CardSwipes({setLikedBooks, onComplete}) {
         const book = books[currentIndex];
 
         if (direction === "right") {
-            setSelectedBooks((prev) => [...prev, book]);
+            setSelectedBooks((prev) => [...prev, book]);  // Add to selected books if liked
         }
 
-        await controls.start({x: direction === "right" ? 250 : -250, opacity: 0});
+        // Track current book in history (so we can go back)
+        setHistory((prev) => [...prev, book]);
+
+        await controls.start({ x: direction === "right" ? 250 : -250, opacity: 0 });
 
         if (selectedBooks.length + 1 >= MAX_SELECTION) {
             sendPrompt();
             return;
         }
 
+        // Move to next book in the list
         setCurrentIndex((prevIndex) => prevIndex + 1);
-        controls.set({x: 0, opacity: 1});
+        controls.set({ x: 0, opacity: 1 });
+    };
+
+    const handleBack = () => {
+        // Go back one step in the history
+        if (history.length > 1) {
+            setHistory((prev) => prev.slice(0, -1));  // Remove last book
+            setCurrentIndex((prevIndex) => prevIndex - 1); // Move back one index
+        }
     };
 
     const sendPrompt = () => {
@@ -97,18 +112,28 @@ export default function CardSwipes({setLikedBooks, onComplete}) {
                             else if (info.offset.x < -100) handleSwipe("left");
                         }}
                     >
-                        <Image
-                            src={currentBook.cover_url.replace(/_SY\d+_/, "_SY500_")}
-                            alt={currentBook.title}
-                            width={160}
-                            height={240}
-                            className="rounded-lg shadow-md"
-                        />
+                        {currentBook.cover_url === "No cover image" ? (
+                            <div
+                                className="flex items-center justify-center bg-gray-300 text-white text-center rounded-lg shadow-md"
+                                style={{ width: "160px", height: "240px" }}
+                            >
+                                <p className="truncate">{currentBook.title}</p>
+                            </div>
+                        ) : (
+                            <Image
+                                src={currentBook.cover_url.replace(/_SY\d+_/, "_SY500_")}
+                                alt={currentBook.title}
+                                width={160}
+                                height={240}
+                                className="rounded-lg shadow-md"
+                            />
+                        )}
                         <h3 className="text-lg font-semibold mt-3 text-gray-900">{currentBook.title}</h3>
                         <p className="text-sm text-gray-600">by {currentBook.author}</p>
                         <p className="text-sm text-gray-500 mt-1">
                             <strong>Genre:</strong> {currentBook.genre}
                         </p>
+                        <p className="text-sm text-gray-600"> {currentBook.page_count}</p>
                     </motion.div>
 
                     <div className="mt-5 flex gap-4">
@@ -116,7 +141,7 @@ export default function CardSwipes({setLikedBooks, onComplete}) {
                             onClick={() => handleSwipe("left")}
                             className="px-6 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg shadow hover:bg-gray-300 transition-all"
                         >
-                            👎 Pass
+                            Next
                         </button>
                         <button
                             onClick={() => handleSwipe("right")}
@@ -124,6 +149,16 @@ export default function CardSwipes({setLikedBooks, onComplete}) {
                         >
                             👍 Like
                         </button>
+
+                        {/* Back button */}
+                        {history.length > 1 && (
+                            <button
+                                onClick={handleBack}
+                                className="px-6 py-2 bg-yellow-500 text-white font-medium rounded-lg shadow hover:bg-yellow-600 transition-all"
+                            >
+                                Back
+                            </button>
+                        )}
                     </div>
                 </>
             )}
