@@ -1,6 +1,6 @@
 import {ColumnDef} from '@tanstack/react-table'
 import {Book} from "@/app/(pages)/books-list/book-interface";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import {ArrowUpDown, MoreHorizontal} from "lucide-react"
 import Image from "next/image";
 
 
@@ -17,7 +17,7 @@ export const columns: ColumnDef<Book>[] = [
         cell: (props) => {
             const book = props.row.original;
 
-            if (!book.cover_url) return null;
+            if (!book.cover_url || book.cover_url==="No cover image") return null;
 
             // Replace "_SY75_" with "_SY500_" for better resolution
             const highResCover = book.cover_url.replace(/_SY\d+_/, "_SY500_");
@@ -35,19 +35,20 @@ export const columns: ColumnDef<Book>[] = [
     },
     {
         accessorKey: 'title',
-        header: ({ column }) => {
+        header: ({column}) => {
             return (
                 <button
                     className="btn btn-ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Title
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-4 w-4"/>
                 </button>
             )
         },
         cell: (props) => {
-            const book = props.row.original
+            const book = props.row.original;
+
             return book.url ? (
                 <a
                     href={"https://www.goodreads.com" + book.url}
@@ -61,17 +62,17 @@ export const columns: ColumnDef<Book>[] = [
                 <p>{props.getValue()}</p>
             );
         }
-        },
+    },
     {
         accessorKey: 'author',
-        header: ({ column }) => {
+        header: ({column}) => {
             return (
                 <button
                     className="btn btn-ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Author
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-4 w-4"/>
                 </button>
             )
         },
@@ -79,14 +80,29 @@ export const columns: ColumnDef<Book>[] = [
     },
     {
         accessorKey: 'avg_rating',
-        header: ({ column }) => {
+        header: ({column}) => {
             return (
                 <button
                     className="btn btn-ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Avg Rating
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-4 w-4"/>
+                </button>
+            )
+        },
+        cell: (props) => <p>{props.getValue()}</p>
+    },
+    {
+        accessorKey: 'my_rating',
+        header: ({column}) => {
+            return (
+                <button
+                    className="btn btn-ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    My Rating
+                    <ArrowUpDown className="ml-2 h-4 w-4"/>
                 </button>
             )
         },
@@ -94,14 +110,14 @@ export const columns: ColumnDef<Book>[] = [
     },
     {
         accessorKey: 'review_count',
-        header: ({ column }) => {
+        header: ({column}) => {
             return (
                 <button
                     className="btn btn-ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Reviews
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-4 w-4"/>
                 </button>
             )
         },
@@ -109,14 +125,14 @@ export const columns: ColumnDef<Book>[] = [
     },
     {
         accessorKey: 'date_read',
-        header: ({ column }) => {
+        header: ({column}) => {
             return (
                 <button
                     className="btn btn-ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Date Read
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-4 w-4"/>
                 </button>
             )
         },

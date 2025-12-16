@@ -6,6 +6,10 @@ import {BookRecommendation} from "@/app/utils/constants";
 import {handleApiError} from "@/app/utils/apiHelper";
 import {prompt_template} from "@/app/utils/constants";
 import CardSwipes from "@/app/(pages)/my-lists/CardSwipes";
+import { recommendationMock } from "@/app/utils/mockData";
+
+const USE_MOCK_DATA = true;
+
 
 export default function Search() {
     const [loading, setLoading] = useState(false);
@@ -28,6 +32,13 @@ export default function Search() {
         setError("");
         setRecommendations([]);
 
+        if (USE_MOCK_DATA) {
+            setMoodAnalysis(recommendationMock.mood_analysis);
+            setRecommendations(recommendationMock.recommendations);
+            setLoading(false);
+            return;
+        }
+
         try {
             const headers = {
                 'accept': 'application/json',
@@ -36,6 +47,8 @@ export default function Search() {
             const data = {
                 prompt: prompt_template(booksToUse),
             };
+
+
 
             const response = await axios.post(
                 "http://localhost:8000/get_recommendations",
@@ -52,27 +65,24 @@ export default function Search() {
             });
 
             if (response.status == 200) {
-                let content = response.data?.choices[0]?.message?.content || "";
 
-                // Trim whitespace
-                content = content.trim();
+                const rawContent = response.data.choices[0].message.content;
+                console.log("raw content", rawContent)
 
-                if (content.startsWith("```json")) {
-                    content = content.slice(7, -3).trim();
-                } else if (content.startsWith("```")) {
-                    content = content.slice(3, -3).trim();
+                const jsonMatch = rawContent.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+
+                if (!jsonMatch) {
+                    throw new Error("No JSON block found in LLM response");
                 }
 
-                // Step 2: Attempt to parse JSON safely
-                let parsedData: BookRecommendation[];
-                try {
-                    parsedData = JSON.parse(content);
-                    setRecommendations(parsedData.recommendations);
-                    setMoodAnalysis(parsedData.mood_analysis);
+                const jsonString = jsonMatch[1];
+                const parsedData = JSON.parse(jsonString);
 
-                } catch (error) {
-                    throw new Error("Failed to parse JSON. Check the LLM response format.");
-                }
+                console.log("parsed data", parsedData)
+
+                setRecommendations(parsedData.recommendations);
+                setMoodAnalysis(parsedData.mood_analysis);
+
             } else {
                 throw new Error("Failed to start scraping");
             }
@@ -85,60 +95,113 @@ export default function Search() {
         }
     }
     return (
-        <div className="max-w-3xl mx-auto p-6 min-h-screen">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Book Recommendation Search</h1>
-            <div className="flex items-center space-x-4">
-                <input
-                    type="text"
-                    placeholder="Enter books you like..."
-                    value={likedBooks}
-                    onChange={(e) => setLikedBooks(e.target.value)}
-                    className="flex-grow border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                    onClick={() => sendRequest(likedBooks)}
-                    className={`px-5 py-3 rounded-lg text-white font-semibold shadow-md transition-all ${!likedBooks || loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
-                    disabled={!likedBooks || loading}
-                >
-                    {loading ? "Loading..." : "Get Recommendations"}
-                </button>
-            </div>
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 px-6 py-16">
+            <div className="max-w-4xl mx-auto space-y-12">
 
-            <CardSwipes setLikedBooks={setLikedBooks} onComplete={(promptBooks:string) => sendRequest(promptBooks)} />
-            {error && <p className="text-red-500 mt-3 text-center">{error}</p>}
+                {/* HERO */}
+                <section className="text-center space-y-4">
+                    <h1 className="text-4xl font-bold text-slate-900">
+                        Taste-Based Book Recommendations
+                    </h1>
+                    <p className="text-slate-600 max-w-2xl mx-auto">
+                        Tell us a few books you enjoyed. We’ll analyze your reading taste and suggest
+                        new books you’re likely to love.
+                    </p>
 
-            {recommendations.length > 0 && (
-                <div className="mt-6">
-                    {moodAnalysis && (
-                        <div className="bg-white p-4 rounded-lg shadow-md">
-                            <h2 className="text-xl font-semibold text-gray-900">Mood Analysis:</h2>
-                            <p className="text-gray-700 mt-1">{moodAnalysis}</p>
-                        </div>
-                    )}
-                    <h2 className="text-xl font-semibold text-gray-900 mt-6">Recommended Books:</h2>
-                    <div className="grid gap-6 mt-4">
-                        {recommendations.map((book, index) => (
-                            <div key={index} className="bg-white p-5 rounded-lg shadow-md border border-gray-200">
-                                <h3 className="text-lg font-bold text-gray-900">{book.title}</h3>
-                                <p className="text-gray-700 text-sm">by <span className="font-medium">{book.author}</span></p>
-                                <p className="text-sm text-gray-600 mt-1"><strong>Genre:</strong> {book.genre}</p>
-                                <p className="text-sm text-gray-700 mt-2"><strong>Description:</strong> {book.description}</p>
-                                <p className="text-sm text-gray-700 mt-2"><strong>Why you'll like it:</strong> {book.reason}</p>
-                                {book.goodreads && (
-                                    <a
-                                        href={book.goodreads}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-500 font-semibold hover:underline mt-2 inline-block"
-                                    >
-                                        View on Goodreads
-                                    </a>
-                                    )}
-                            </div>
-                        ))}
+                    <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                        <input
+                            type="text"
+                            placeholder="e.g. The Bell Jar, I, Robot, Notes from Underground"
+                            value={likedBooks}
+                            onChange={(e) => setLikedBooks(e.target.value)}
+                            className="flex-1 max-w-xl rounded-xl border border-slate-300 px-4 py-3 shadow-sm focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            onClick={() => sendRequest(likedBooks)}
+                            disabled={!likedBooks || loading}
+                            className={`rounded-xl px-6 py-3 font-semibold text-white transition ${
+                                loading
+                                    ? "bg-slate-400 cursor-not-allowed"
+                                    : "bg-blue-600 hover:bg-blue-700"
+                            }`}
+                        >
+                            {loading ? "Analyzing…" : "Get recommendations"}
+                        </button>
                     </div>
-                </div>
-            )}
+                </section>
+
+                {/* SWIPE SUGGESTIONS */}
+                <section className="pt-6">
+                    <CardSwipes
+                        setLikedBooks={setLikedBooks}
+                        onComplete={(promptBooks: string) => sendRequest(promptBooks)}
+                    />
+                </section>
+
+                {error && (
+                    <p className="text-center text-red-500 font-medium">{error}</p>
+                )}
+
+                {/* AI INSIGHT */}
+                {moodAnalysis && (
+                    <section className="bg-white rounded-2xl shadow-md p-6 border-l-4 border-blue-500">
+                        <p className="uppercase text-xs tracking-widest text-blue-600 font-semibold">
+                            AI Insight
+                        </p>
+                        <p className="mt-2 text-slate-700 leading-relaxed">
+                            {moodAnalysis}
+                        </p>
+                    </section>
+                )}
+
+                {/* RECOMMENDATIONS */}
+                {recommendations.length > 0 && (
+                    <section className="space-y-6">
+                        <h2 className="text-2xl font-semibold text-slate-900">
+                            Recommended for you
+                        </h2>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {recommendations.map((book, index) => (
+                                <div
+                                    key={index}
+                                    className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition"
+                                >
+                                    <h3 className="text-lg font-bold text-slate-900">
+                                        {book.title}
+                                    </h3>
+                                    <p className="text-sm text-slate-600 mb-2">
+                                        by <span className="font-medium">{book.author}</span>
+                                    </p>
+
+                                    <p className="text-sm text-slate-500">
+                                        <strong>Genre:</strong> {book.genre}
+                                    </p>
+
+                                    <p className="text-sm text-slate-700 mt-3">
+                                        {book.description}
+                                    </p>
+
+                                    <p className="text-sm text-slate-700 mt-3">
+                                        <strong>Why you’ll like it:</strong> {book.reason}
+                                    </p>
+
+                                    {book.goodreads && (
+                                        <a
+                                            href={book.goodreads}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-block mt-4 text-blue-600 font-semibold hover:underline"
+                                        >
+                                            View on Goodreads →
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+            </div>
         </div>
     );
 }

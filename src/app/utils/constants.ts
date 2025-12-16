@@ -8,13 +8,35 @@ export interface BookRecommendation {
 }
 
 export const prompt_template = (books: string) => {
-    return `Based on the books I liked: ${books}, analyze what kind of themes, moods, and character types I seem to prefer in my reading. " +
-    "Then, generate book recommendations that match these preferences. The recommendations should be in JSON format and include books with similar themes, writing styles, or emotional depth. " +
-    "Ensure the response follows this exact JSON structure:" +
-    "{" +
-    "  mood_analysis: 'A short summary of the kind of themes, moods, or character traits I seem to be drawn to.', " +
-    "  recommendations: [ " +
-    "    {title: 'Book Title', author: 'Book Author', genre: 'Book Genre', description: 'Book Description', reason: 'Reason why I might like it', goodreads: 'a link to that book on goodreads'}" +
-    "  ]" +
-    "}";`
+    return `
+You are an assistant that recommends books based on reading preferences.
+
+Books the user liked:
+${books}
+
+Task:
+1. Briefly analyze the themes, moods, and character types implied by these books.
+2. Recommend books that match these preferences.
+
+Output rules (strict):
+- Respond ONLY with a single JSON object inside a markdown code block.
+- Do NOT include explanations, headings, or extra text.
+- Follow this exact structure:
+
+\`\`\`json
+{
+  "mood_analysis": "Short summary of themes, moods, or character traits the user prefers.",
+  "recommendations": [
+    {
+      "title": "Book title",
+      "author": "Author name",
+      "genre": "Genre",
+      "description": "Short description",
+      "reason": "Why this matches the user's taste",
+      "goodreads": "Goodreads URL"
+    }
+  ]
+}
+\`\`\`
+`;
 };
